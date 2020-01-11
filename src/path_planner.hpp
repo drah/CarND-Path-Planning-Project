@@ -111,6 +111,11 @@ void spline_along_lane_planner(
   double ref_yaw = deg2rad(car_yaw);
   int prev_size = previous_path_x.size();
 
+#if DEBUG
+for(int i=0; i<prev_size; ++i)
+  cout << "previous_path: " << previous_path_x[i] << ", " << previous_path_y[i] << endl;
+
+#endif
   // make the first two points for the spline
   if(prev_size < 2){
     // make the path tangent to the car by creating two points
