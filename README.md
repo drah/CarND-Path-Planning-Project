@@ -1,6 +1,54 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
-   
+## Compilation
+- $ mkdir build
+- $ cd build
+- $ cmake ..
+- $ make
+- $ ./path_planning
+
+## Valid Trajectories
+[x] The car is able to drive at least 4.32 miles without incident.
+    The car is able to drive 5.4 miles within 7 minutes.
+[x] The car drives according to the speed limit.
+    The maximum speed of the car is about 49 mps and below 50 mps.
+[x] Max Acceleration and Jerk are not Exceeded.
+    The warning does not appear during the driving.
+[x] Car does not have collisions.
+    No collisions.
+[x] The car stays in its lane, except for the time between changing lanes.
+    When there is another car in front of us, we may change to left or right lane. Otherwise, we keep staying in the current lane.
+[x] The car is able to change lanes.
+    Yes, the car is able to change lanes smoothly.
+
+## Reflections
+The implementation, sit in path_planner.hpp, could be split into the following steps:
+1. Generate path points
+- The trajectories are represented by lots of points.
+- The car would get to the given points one by one and 50 points would be reached per second.
+- We could go straight by points with increasing x and fixed y.
+- We could go along the current lane by points with increasing s and fixed d.
+- We could change lane by points with increasing or decreasing d.
+
+2. Spline interpolation
+- In order to make the car move smoothly, we could utilize interpolation.
+- We set up some anchor points first for the spline to calculate the coefficients of the fit line. Note that we transform the points into local(car) coordinates before feeding to spline.
+- After we have the fit line, we enumerate the x values and get the corresponding y values. And, we transform the points back into global (map) coordinates.
+
+3. Warm-start
+- Set the initial velocity to zero, and keep increasing it by 0.224.
+
+4. Slow down
+- We could check if there is another car in front of us by utilizing sensor fusion.
+- When there is another car driving in the same lane as our car in, we could calculate the position of that car in the future. If collisions may occur, we could decrease the speed of our car, or, change lane.
+
+5. Change lane
+- Again, we could utilize the sensor fusion to see if there are cars on the lane left to us or right to us.
+- With the help of spline, we could generate points simply by changing the target lane index.
+
+
+## The followings are from the original repository
+
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).  
 
