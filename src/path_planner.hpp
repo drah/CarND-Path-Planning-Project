@@ -127,6 +127,8 @@ void spline_along_lane_planner(
     double car_y_p2 = previous_path_y[prev_size - 2];
     double car_x_p1 = previous_path_x[prev_size - 1];
     double car_y_p1 = previous_path_y[prev_size - 1];
+#if DEBUG
+cout << "car_x_p2: " << car_x_p2 << ", car_x_p1: " << car_x_p1 << endl;
     pts_x.push_back(car_x_p2);
     pts_x.push_back(car_x_p1);
     pts_y.push_back(car_y_p2);
