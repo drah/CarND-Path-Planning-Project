@@ -134,10 +134,10 @@ void spline_along_lane_planner(
     if(4 * lane_index < other_d && other_d < 4 * lane_index + 4){
       double other_vx = sensor_fusion[i][3];
       double other_vy = sensor_fusion[i][4];
+      double other_vel = sqrt(other_vx * other_vx + other_vy * other_vy);
       double other_s = sensor_fusion[i][5];
-      double vel = sqrt(other_vx * other_vx + other_vy * other_vy);
-      double other_s_future = other_s + vel * 0.02 * prev_size;
-      if(ref_s < other_s_future && other_s_future - ref_s < 30.){
+      double other_s_future = other_s + other_vel * 0.02 * prev_size;
+      if(ref_s < other_s_future && other_s_future - ref_s < 50.){
         state = SLOWDOWN;
       }
     }
