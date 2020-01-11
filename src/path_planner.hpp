@@ -1,5 +1,12 @@
 #ifndef PATH_PLANNER_H
 #define PATH_PLANNER_H
+#define DEBUG (1)
+
+#if DEBUG
+#include <iostream>
+using std::cout;
+using std::endl;
+#endif
 
 #include "helpers.h"
 #include "spline.h"
@@ -98,7 +105,10 @@ void spline_along_lane_planner(
 {
   int lane_index = 1;
   vector<double> pts_x, pts_y;
-  double ref_x = car_x, ref_y = car_y, ref_yaw = deg2rad(car_yaw);
+  double ref_s = car_s;
+  double ref_x = car_x;
+  double ref_y = car_y;
+  double ref_yaw = deg2rad(car_yaw);
   int prev_size = previous_path_x.size();
 
   // make the first two points for the spline
@@ -124,11 +134,15 @@ void spline_along_lane_planner(
     ref_x = car_x_p1;
     ref_y = car_y_p1;
     ref_yaw = atan2(car_y_p2 - car_y_p1, car_x_p2 - car_x_p1);
+    ref_s = getFrenet(ref_x, ref_y, ref_yaw, map_waypoints_x, map_waypoints_y);
+#if DEBUG
+cout << "ref_x: " << ref_x << ", ref_y: " << ref_y << ", ref_s: " << ref_s << endl;
+#endif
   }
 
   //make three points
   for(int i=1; i<4; ++i){
-    double next_i_s = car_s + 30 * i;
+    double next_i_s = ref_s + 30 * i;
     double next_i_d = 2 + 4 * lane_index;
     vector<double> next_i_waypoint = getXY(next_i_s, next_i_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
     pts_x.push_back(next_i_waypoint[0]);
@@ -146,6 +160,10 @@ void spline_along_lane_planner(
 
   //spline interpolations
   tk::spline s;
+if DEBUG
+for(int i=0; i<pts_x.size(); ++i)
+  cout << "pts_xy: " << pts_x[i] << ", " << pts_y[i] << endl;
+#endif
   s.set_points(pts_x, pts_y);
 
   //filling points using previous_path;
