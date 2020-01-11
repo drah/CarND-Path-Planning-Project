@@ -114,7 +114,6 @@ void spline_along_lane_planner(
 #if DEBUG
 for(int i=0; i<prev_size; ++i)
   cout << "previous_path: " << previous_path_x[i] << ", " << previous_path_y[i] << endl;
-
 #endif
   // make the first two points for the spline
   if(prev_size < 2){
@@ -132,16 +131,13 @@ for(int i=0; i<prev_size; ++i)
     double car_y_p2 = previous_path_y[prev_size - 2];
     double car_x_p1 = previous_path_x[prev_size - 1];
     double car_y_p1 = previous_path_y[prev_size - 1];
-#if DEBUG
-cout << "car_x_p2: " << car_x_p2 << ", car_x_p1: " << car_x_p1 << endl;
-#endif
     pts_x.push_back(car_x_p2);
     pts_x.push_back(car_x_p1);
     pts_y.push_back(car_y_p2);
     pts_y.push_back(car_y_p1);
     ref_x = car_x_p1;
     ref_y = car_y_p1;
-    ref_yaw = atan2(car_y_p2 - car_y_p1, car_x_p2 - car_x_p1);
+    ref_yaw = atan2(car_y_p1 - car_y_p2, car_x_p1 - car_x_p2);
     ref_s = getFrenet(ref_x, ref_y, ref_yaw, map_waypoints_x, map_waypoints_y)[0];
 #if DEBUG
 cout << "ref_x: " << ref_x << ", ref_y: " << ref_y << ", ref_s: " << ref_s << endl;
