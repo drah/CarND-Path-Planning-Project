@@ -8,17 +8,17 @@ Self-Driving Car Engineer Nanodegree Program
 - $ ./path_planning
 
 ## Valid Trajectories
-[x] The car is able to drive at least 4.32 miles without incident.
+- [x] The car is able to drive at least 4.32 miles without incident.
     The car is able to drive 5.4 miles within 7 minutes.
-[x] The car drives according to the speed limit.
+- [x] The car drives according to the speed limit.
     The maximum speed of the car is about 49 mps and below 50 mps.
-[x] Max Acceleration and Jerk are not Exceeded.
+- [x] Max Acceleration and Jerk are not Exceeded.
     The warning does not appear during the driving.
-[x] Car does not have collisions.
+- [x] Car does not have collisions.
     No collisions.
-[x] The car stays in its lane, except for the time between changing lanes.
+- [x] The car stays in its lane, except for the time between changing lanes.
     When there is another car in front of us, we may change to left or right lane. Otherwise, we keep staying in the current lane.
-[x] The car is able to change lanes.
+- [x] The car is able to change lanes.
     Yes, the car is able to change lanes smoothly.
 
 ## Reflections
