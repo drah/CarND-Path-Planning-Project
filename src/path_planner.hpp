@@ -151,7 +151,7 @@ void spline_along_lane_planner(
         ref_vel = 48.;
       break;
     case SLOWDOWN:
-      ref_vel = 29.5;
+      ref_vel -= 1.;
       break;
     default:
       break;
@@ -203,10 +203,6 @@ void spline_along_lane_planner(
 
   //spline interpolations
   tk::spline s;
-#if DEBUG
-for(int i=0; i<pts_x.size(); ++i)
-  cout << "pts_xy: " << pts_x[i] << ", " << pts_y[i] << endl;
-#endif
   s.set_points(pts_x, pts_y);
 
   //filling points using previous_path;
