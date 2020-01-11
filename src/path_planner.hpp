@@ -4,7 +4,6 @@
 #include "helpers.h"
 #include "spline.h"
 
-
 void straight_planner(
     vector<double> &point_x,
     vector<double> &point_y,
@@ -34,8 +33,8 @@ void circle_planner(
 
   for (int i = 0; i < path_size; ++i)
   {
-    next_x_vals.push_back(previous_path_x[i]);
-    next_y_vals.push_back(previous_path_y[i]);
+    point_x.push_back(previous_path_x[i]);
+    point_y.push_back(previous_path_y[i]);
   }
 
   if (path_size == 0)
@@ -57,8 +56,8 @@ void circle_planner(
   double dist_inc = 0.5;
   for (int i = 0; i < 50 - path_size; ++i)
   {
-    next_x_vals.push_back(pos_x + (dist_inc)*cos(angle + (i + 1) * (pi() / 100)));
-    next_y_vals.push_back(pos_y + (dist_inc)*sin(angle + (i + 1) * (pi() / 100)));
+    point_x.push_back(pos_x + (dist_inc)*cos(angle + (i + 1) * (pi() / 100)));
+    point_y.push_back(pos_y + (dist_inc)*sin(angle + (i + 1) * (pi() / 100)));
     pos_x += (dist_inc)*cos(angle + (i + 1) * (pi() / 100));
     pos_y += (dist_inc)*sin(angle + (i + 1) * (pi() / 100));
   }
@@ -77,7 +76,7 @@ void along_lane_planner(
   for(int i=0; i<50; ++i){
     double next_s = car_s + n_inc * i;
     double next_d = 6;
-    double next_xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+    vector<double> next_xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
     point_x.push_back(next_xy[0]);
     point_y.push_back(next_xy[1]);
   }
@@ -86,6 +85,7 @@ void along_lane_planner(
 void spline_along_lane_planner(
     vector<double> &point_x,
     vector<double> &point_y,
+    const double car_s,
     const double car_x,
     const double car_y,
     const double car_yaw,
@@ -131,22 +131,22 @@ void spline_along_lane_planner(
     double next_i_s = car_s + 30 * i;
     double next_i_d = 2 + 4 * lane_index;
     vector<double> next_i_waypoint = getXY(next_i_s, next_i_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-    pts_x.push_back(next_waypoint[0]);
-    pts_y.push_back(next_waypoint[1]);
+    pts_x.push_back(next_i_waypoint[0]);
+    pts_y.push_back(next_i_waypoint[1]);
   }
 
   //transform the global map coordinates to local car coordinates: shift and rotate
-  for(int i=0; i<ptsx.size(); ++i){
-    double shift_x = ptsx[i] - ref_x;
-    double shift_y = ptsy[i] - ref_y;
+  for(int i=0; i<pts_x.size(); ++i){
+    double shift_x = pts_x[i] - ref_x;
+    double shift_y = pts_y[i] - ref_y;
     double rotate_radius = 0. - ref_yaw;
-    ptsx[i] = shift_x * cos(rotate_radius) - shift_y * sin(rotate_radius);
-    ptsy[i] = shift_x * sin(rotate_radius) + shift_y * cos(rotate_radius);
+    pts_x[i] = shift_x * cos(rotate_radius) - shift_y * sin(rotate_radius);
+    pts_y[i] = shift_x * sin(rotate_radius) + shift_y * cos(rotate_radius);
   }
 
   //spline interpolations
   tk::spline s;
-  s.set_points(ptsx, ptsy);
+  s.set_points(pts_x, pts_y);
 
   //filling points using previous_path;
   for(int i=0; i<previous_path_x.size(); ++i){
@@ -162,9 +162,9 @@ void spline_along_lane_planner(
   double delta_x = target_x / n_point;
   for(int i=1; i<=50-previous_path_x.size(); ++i){
     double local_x = i * delta_x;
-    double local_y = s(new_x);
-    double global_x = new_x * cos(ref_yaw) - new_y * sin(ref_yaw) + ref_x;
-    double global_y = new_x * sin(ref_yaw) + new_y * cos(ref_yaw) + ref_y;
+    double local_y = s(local_x);
+    double global_x = local_x * cos(ref_yaw) - local_y * sin(ref_yaw) + ref_x;
+    double global_y = local_x * sin(ref_yaw) + local_y * cos(ref_yaw) + ref_y;
     point_x.push_back(global_x);
     point_y.push_back(global_y);
   }
