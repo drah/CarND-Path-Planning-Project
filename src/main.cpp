@@ -101,35 +101,41 @@ int main() {
            */
 
 
-straight_planner(
-    next_x_vals,
-    next_y_vals,
-    car_x,
-    car_y,
-    car_yaw);
-
-/*
-along_lane_planner(
-    next_x_vals,
-    next_y_vals,
-    car_s,
-    car_d,
-    map_waypoints_s,
-    map_waypoints_x,
-    map_waypoints_y);
-          spline_along_lane_planner(
+          /*
+          straight_planner(
               next_x_vals,
               next_y_vals,
               car_x,
               car_y,
+              car_yaw);
+
+          along_lane_planner(
+              next_x_vals,
+              next_y_vals,
+              car_s,
+              car_d,
+              map_waypoints_s,
+              map_waypoints_x,
+              map_waypoints_y);
+          */
+
+          spline_along_lane_planner(
+              next_x_vals,
+              next_y_vals,
+              car_s,
+              car_d,
+              car_x,
+              car_y,
               car_yaw,
               car_speed,
+              end_path_s,
+              end_path_d,
               previous_path_x,
               previous_path_y,
               map_waypoints_s,
               map_waypoints_x,
-              map_waypoints_y);
-*/
+              map_waypoints_y,
+              sensor_fusion);
 
 
           msgJson["next_x"] = next_x_vals;
