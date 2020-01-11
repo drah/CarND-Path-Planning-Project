@@ -119,7 +119,7 @@ void spline_along_lane_planner(
   double ref_x = car_x;
   double ref_y = car_y;
   double ref_yaw = deg2rad(car_yaw);
-  double ref_vel = car_speed;
+  static double ref_vel = 0.;
   int prev_size = previous_path_x.size();
   
   if(prev_size > 0){
