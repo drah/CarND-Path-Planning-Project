@@ -147,11 +147,11 @@ void spline_along_lane_planner(
   switch(state){
     case ACC:
       ref_vel += 1.;
-      if(ref_vel > 49.5)
-        ref_vel = 49.5;
+      if(ref_vel > 48.)
+        ref_vel = 48.;
       break;
     case SLOWDOWN:
-      ref_vel -= 1.;
+      ref_vel = 29.5;
       break;
     default:
       break;
