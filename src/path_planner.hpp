@@ -134,7 +134,7 @@ void spline_along_lane_planner(
     ref_x = car_x_p1;
     ref_y = car_y_p1;
     ref_yaw = atan2(car_y_p2 - car_y_p1, car_x_p2 - car_x_p1);
-    ref_s = getFrenet(ref_x, ref_y, ref_yaw, map_waypoints_x, map_waypoints_y);
+    ref_s = getFrenet(ref_x, ref_y, ref_yaw, map_waypoints_x, map_waypoints_y)[0];
 #if DEBUG
 cout << "ref_x: " << ref_x << ", ref_y: " << ref_y << ", ref_s: " << ref_s << endl;
 #endif
@@ -160,7 +160,7 @@ cout << "ref_x: " << ref_x << ", ref_y: " << ref_y << ", ref_s: " << ref_s << en
 
   //spline interpolations
   tk::spline s;
-if DEBUG
+#if DEBUG
 for(int i=0; i<pts_x.size(); ++i)
   cout << "pts_xy: " << pts_x[i] << ", " << pts_y[i] << endl;
 #endif
