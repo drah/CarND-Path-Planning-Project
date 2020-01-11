@@ -7,6 +7,7 @@
 #include "Eigen-3.3/Eigen/QR"
 #include "helpers.h"
 #include "json.hpp"
+#include "path_planner.hpp"
 
 // for convenience
 using nlohmann::json;
@@ -87,6 +88,7 @@ int main() {
           // Sensor Fusion Data, a list of all other cars on the same side 
           //   of the road.
           auto sensor_fusion = j[1]["sensor_fusion"];
+          // [ id, x, y, vx, vy, s, d]
 
           json msgJson;
 
@@ -97,6 +99,18 @@ int main() {
            * TODO: define a path made up of (x,y) points that the car will visit
            *   sequentially every .02 seconds
            */
+          spline_along_lane_planner(
+              next_x_vals,
+              next_y_vals,
+              car_x,
+              car_y,
+              car_yaw,
+              car_speed,
+              previous_path_x,
+              previous_path_y,
+              map_waypoints_s,
+              map_waypoints_x,
+              map_waypoints_y);
 
 
           msgJson["next_x"] = next_x_vals;
