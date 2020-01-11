@@ -8,13 +8,14 @@ using std::cout;
 using std::endl;
 #endif
 
+#include <math.h>
 #include "helpers.h"
 #include "spline.h"
 
 enum State {
   INIT,
   ACC,
-  SLOWDOWN
+  CHANGEORSLOWDOWN
 };
 void straight_planner(
     vector<double> &point_x,
@@ -112,14 +113,15 @@ void spline_along_lane_planner(
     const vector<double> &map_waypoints_y,
     const vector<vector<double>> &sensor_fusion)
 {
-  int lane_index = 1;
+  static int target_lane_index = 1;
+  static double ref_vel = 0.;
+
   vector<double> pts_x, pts_y;
   double ref_s = car_s;
   double ref_d = car_d;
   double ref_x = car_x;
   double ref_y = car_y;
   double ref_yaw = deg2rad(car_yaw);
-  static double ref_vel = 0.;
   int prev_size = previous_path_x.size();
   
   if(prev_size > 0){
@@ -127,18 +129,26 @@ void spline_along_lane_planner(
     ref_d = end_path_d;
   }
   
-  // check other cars using sensor fusion
+  // check other cars using sensor fusion to determine state
   int state = ACC;
+  bool could_move_left = car_d > 4 ? true : false;
+  bool could_move_right = car_d < 8 ? true : false;
   for(int i=0; i<sensor_fusion.size(); ++i){
     double other_d = sensor_fusion[i][6];
-    if(4 * lane_index < other_d && other_d < 4 * lane_index + 4){
-      double other_vx = sensor_fusion[i][3];
-      double other_vy = sensor_fusion[i][4];
-      double other_vel = sqrt(other_vx * other_vx + other_vy * other_vy);
-      double other_s = sensor_fusion[i][5];
-      double other_s_future = other_s + other_vel * 0.02 * prev_size;
-      if(ref_s < other_s_future && other_s_future - ref_s < 50.){
-        state = SLOWDOWN;
+    double other_vx = sensor_fusion[i][3];
+    double other_vy = sensor_fusion[i][4];
+    double other_vel = sqrt(other_vx * other_vx + other_vy * other_vy);
+    double other_s = sensor_fusion[i][5];
+    double other_s_future = other_s + other_vel * 0.02 * prev_size;
+    if(ref_s < other_s_future && fabs(other_s_future - ref_s) < 30.){
+      if(4 * target_lane_index <= other_d && other_d < 4 * target_lane_index + 4){ // same lane
+        state = CHANGEORSLOWDOWN;
+      }
+      else if(other_d < 4 * target_lane_index){ // on my left
+        could_move_left = false;
+      }
+      else{ // on my right
+        could_move_right = false;
       }
     }
   }
@@ -146,12 +156,17 @@ void spline_along_lane_planner(
   // increase speed
   switch(state){
     case ACC:
-      ref_vel += 1.;
+      ref_vel += 0.224;
       if(ref_vel > 48.)
         ref_vel = 48.;
       break;
-    case SLOWDOWN:
-      ref_vel -= 1.;
+    case CHANGEORSLOWDOWN:
+      if(could_move_left)
+        target_lane_index--;
+      else if(could_move_right)
+        target_lane_index++;
+      else
+        ref_vel -= 0.224;
       break;
     default:
       break;
@@ -186,7 +201,7 @@ void spline_along_lane_planner(
   //make three points
   for(int i=1; i<4; ++i){
     double next_i_s = ref_s + 30 * i;
-    double next_i_d = 2 + 4 * lane_index;
+    double next_i_d = 2 + 4 * target_lane_index;
     vector<double> next_i_waypoint = getXY(next_i_s, next_i_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
     pts_x.push_back(next_i_waypoint[0]);
     pts_y.push_back(next_i_waypoint[1]);
