@@ -2,6 +2,7 @@
 #define PATH_PLANNER_H
 
 #include "helpers.h"
+#include "spline.h"
 
 void straight_planner(
     vector<double> &point_x,
@@ -31,6 +32,7 @@ void along_lane_planner(
 void spline_along_lane_planner(
     vector<double> &point_x,
     vector<double> &point_y,
+    const double car_s,
     const double car_x,
     const double car_y,
     const double car_yaw,
